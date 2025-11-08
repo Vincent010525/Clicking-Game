@@ -1,88 +1,104 @@
-# Guessing Game
+# Clicking Game
 
-A two-player network-based guessing game built with **Java** and **JavaFX**, using **TCP sockets** for communication. Each player secretly places “correct” and “wrong” nodes on their opponent’s grid, then both take turns trying to guess the correct positions. The first player to find all three correct nodes wins, while clicking the wrong node results in an instant loss.
+A reaction-based mobile game built with **Kotlin** and **Android Studio**.  
+The goal is to tap enemies that appear on the screen before the timer reaches zero.  
+Enemies appear one at a time in randomized positions, and the difficulty level determines how many possible enemy positions are used. The game tracks the player's score and saves the all-time high score using **DataStore**.
 
 ---
 
 ## Features
 
-- Two-player network gameplay (host and client)
-- JavaFX user interface with two 5×5 grids
-- Real-time communication using ServerSocket and Socket
-- Placement phase followed by turn-based guessing
-- Win and loss detection with end-of-game screen
-- Multithreaded networking to avoid blocking the UI
+- Three difficulty levels: Easy, Medium, Hard  
+- Randomized enemy appearance across multiple screen positions  
+- Timer that decreases based on performance  
+- Score and high score tracking  
+- High score saved persistently with DataStore  
+- Smooth gameplay with instant enemy switching  
+- Game over dialog displaying final score or new high score
 
 ---
 
 ## How the Game Works
 
-### Connecting to a Game
-- **Host a game:** Enter a port number and start the server.
-- **Join a game:** Enter the host’s IP address and port number.
+### Difficulty Selection
+When the game starts, the player chooses a difficulty:
+- **Easy:** Small number of enemy positions  
+- **Medium:** Moderate number of enemy positions  
+- **Hard:** Maximum number of enemy positions  
 
-Once both players are connected, the placement phase begins.
+The selected difficulty determines how many enemy `ImageView` objects are added to the active enemy list.
 
-### Placement Phase
-Each player places hidden nodes on the opponent’s grid:
+### Gameplay
+- One enemy becomes visible at a random position.  
+- When the player taps the enemy:
+  - The score increases by 1  
+  - A new enemy appears at a different random position  
+  - The timer resets  
 
-- One wrong node  
-- Three correct nodes  
+Every **10 points**, the time allowed to tap the next enemy is reduced, increasing the challenge over time.
 
-The joining player places their nodes first. After both players have placed their nodes, the guessing phase begins.
+### Timer
+A `CountDownTimer` starts (initially 5 seconds) each time an enemy is tapped.  
+If the timer reaches zero, the game ends.
 
-### Guessing Phase
-Players take turns selecting nodes on their own grid:
-
-- Selecting a correct node reveals it and moves the player closer to winning.
-- Selecting the wrong node ends the game immediately with a loss.
-- Selecting a normal node clears it and passes the turn.
-
-A player wins by finding all three correct nodes.  
-A player loses by selecting the wrong node.
+### High Score
+- Uses **Jetpack DataStore** to store the all-time high score.
+- High scores are only saved when playing on **Hard** difficulty.
+- If the current score beats the existing high score, it becomes the new saved score.
 
 ---
 
-## Installation
+## Development Overview
 
-Clone the repository:
+This game was built by:
+- Creating 18 enemy `ImageView` objects and positioning them in the layout.
+- Implementing difficulty logic by choosing a subset of these enemies dynamically.
+- Using an `ArrayList<ImageView>` to manage all active enemies during gameplay.
+- Handling randomized enemy selection using `Random.nextInt()`.
+- Implementing a restartable `CountDownTimer` for time-pressure gameplay.
+- Adding score tracking and UI updates via `TextView` components.
+- Persisting high scores using DataStore with `intPreferencesKey`, `Flow`, and coroutines.
+- Triggering game-over dialogs that display final or high score results.
 
-```bash
-git clone https://github.com/<your-username>/GuessingGame.git
-cd GuessingGame
-```
+This structure demonstrates work with Android UI, Kotlin logic, state management, and persistent storage.
 
-Run the program:
+---
 
-```bash
-java GuessingGame
-```
+## Core Technologies
 
-JavaFX must be installed or included through your build configuration.
+- **Kotlin**
+- **Android Studio**
+- **Android Views**
+- **CountDownTimer**
+- **Jetpack DataStore**
+- **Coroutines (Dispatchers.IO / Main)**
 
 ---
 
 ## Project Structure
 
 ```
-/src
- ├── GuessingGame.java     # Main application, UI, and game logic
- ├── Connector.java        # Networking (host, join, send, receive)
- ├── ReceiverHandler.java  # Interface for connection and message callbacks
- └── Node.java             # Representation of each grid node
+/app
+ ├── MainActivity.kt              # Main game logic, timer, scoring, UI updates
+ ├── dataStore setup              # High score persistence
+ ├── activity_main.xml            # Layout with all enemy ImageViews and UI elements
+ ├── drawable/                    # Enemy images and other assets
+ └── values/                      # Styles, colors, strings
 ```
 
 ---
 
-## Future Improvements
+## How to Run
 
-- Improved UI and visual feedback
-- Chat system
-- Multi-round gameplay or scoring
-- Configurable grid sizes
+1. Clone the repository.
+2. Open the project in **Android Studio**.
+3. Sync Gradle.
+4. Run on an emulator or physical Android device.
+
+No additional setup is required.
 
 ---
 
 ## Author
 
-Vincent Bejbom
+**Vincent Bejbom**
