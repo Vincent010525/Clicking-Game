@@ -1,4 +1,4 @@
-# Clicking Game
+# Tap Rush
 
 A reaction-based mobile game built with **Kotlin** and **Android Studio**.  
 The goal is to tap enemies that appear on the screen before the timer reaches zero.  
